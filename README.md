@@ -1,72 +1,61 @@
-<<<<<<< HEAD
-# Service Marketplace - Backend (FastAPI + PostgreSQL)
+# Service Marketplace - Frontend (Next.js + Redux Toolkit)
 
 ## Tech Stack
-- FastAPI
-- PostgreSQL (SQLAlchemy ORM)
-- JWT Authentication (python-jose)
-- Alembic (Database Migration)
+- Next.js 14 (App Router) + TypeScript
+- Redux Toolkit + React Redux (State Management)
+- Tailwind CSS
+- Axios (Backend API Calls)
+- JWT Token stored in Cookies, Route Protection via Middleware
 
-## Local Setup (PostgreSQL দিয়ে)
+## Connection with Backend
+This Frontend works connected with the `backend/` (FastAPI) project. The Backend must be started first.
 
-### ১. PostgreSQL Database তৈরি করুন
+## Local Setup
+
+### 1. Install Dependencies
 ```bash
-psql -U postgres
-CREATE DATABASE marketplace_db;
+npm install
 ```
 
-### ২. Virtual Environment তৈরি ও Activate করুন
+### 2. Set Environment Variables
 ```bash
-python -m venv venv
-source venv/bin/activate      # Windows-এ: venv\Scripts\activate
+cp .env.local.example .env.local
+```
+Check that the Backend API URL is correct in `.env.local`:
+
+NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
+
+### 3. Start the Development Server
+```bash
+npm run dev
 ```
 
-### ৩. Dependencies Install করুন
-```bash
-pip install -r requirements.txt
-```
+Frontend will run at: `http://localhost:3000`
 
-### ৪. .env ফাইল তৈরি করুন
-```bash
-cp .env.example .env
-```
-তারপর `.env` ফাইলে `DATABASE_URL` ও `SECRET_KEY` ঠিকভাবে সেট করুন।
+## Folder Structure (Summary)
+- `src/app/` — Next.js App Router Pages (Auth/User/Vendor/Admin separated using Route Groups)
+- `src/components/` — UI, Layout, Auth, Marketplace, Checkout, Vendor, Admin Components
+- `src/store/` — Redux Toolkit Store and Slices (auth, service, order, vendor, admin)
+- `src/lib/api/` — Separate API functions for each Backend endpoint
+- `src/middleware.ts` — Role-Based Route Protection (runs at the Edge)
 
-### ৫. Alembic দিয়ে Migration Run করুন
-```bash
-alembic revision --autogenerate -m "initial migration"
-alembic upgrade head
-```
+## How Authentication & RBAC Works
+1. After Login, a JWT Token is received from the Backend and stored in Cookies (`access_token`, `user_role`)
+2. An Axios Interceptor attaches the Token to the Authorization Header on every request
+3. `middleware.ts` checks the Cookie before entering any Protected Route — redirects to `/unauthorized` if the Role doesn't match
+4. On the Client-Side, the `ProtectedRoute` Component performs a Double-Check (stays protected even if Middleware is bypassed)
+5. On receiving a 401 Response, the Axios Interceptor automatically logs the user out and redirects to the Login Page
 
-### ৬. Seed Data ঢোকান (Sample Admin/Vendor/User/Service)
-```bash
-python -m scripts.seed_data
-```
-
-### ৭. Server চালু করুন
-```bash
-uvicorn app.main:app --reload
-```
-
-API চলবে: `http://localhost:8000`
-Swagger Docs: `http://localhost:8000/docs`
-
-## Seed Data দিয়ে Test Login
-
+## Test Login (Using Backend Seed Data)
 | Role   | Email                  | Password   |
 |--------|------------------------|------------|
 | Admin  | admin@marketplace.com  | Admin123!  |
 | Vendor | vendor@marketplace.com | Vendor123! |
 | User   | user@marketplace.com   | User123!   |
 
-## Docker দিয়ে চালানো (VPS-এ Deploy করার জন্য)
+## Production Build (Vercel Deploy)
 ```bash
-docker-compose up --build -d
+npm run build
+npm run start
 ```
-
-## Mock Payment Testing
-Checkout করার সময় Card Number-এর শেষে `0000` দিলে Payment Fail Simulate হবে।
-অন্য কোনো Number দিলে Payment Success হবে।
-=======
-# task4_backend
->>>>>>> 2fd172a714332a0a98b29cad912946e39ebca32c
+When deploying on Vercel, the `NEXT_PUBLIC_API_URL` Environment Variable must be set (the Public URL of the Backend running on the VPS).
