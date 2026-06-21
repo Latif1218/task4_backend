@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Service Marketplace - Backend (FastAPI + PostgreSQL)
 
 ## Tech Stack
@@ -66,3 +67,6 @@ docker-compose up --build -d
 ## Mock Payment Testing
 Checkout করার সময় Card Number-এর শেষে `0000` দিলে Payment Fail Simulate হবে।
 অন্য কোনো Number দিলে Payment Success হবে।
+=======
+# task4_backend
+>>>>>>> 2fd172a714332a0a98b29cad912946e39ebca32c
